@@ -3,14 +3,12 @@ from modules.textfitter import CenterdTextImage
 from modules.gradient import Gradient
 from datetime import datetime
 import config
-import re
 
 
 class Post(object):
-    def __init__(self, size, path):
+    def __init__(self, size):
         self.size = size
         self.post_size = (size, size)
-        self.save_path = path
         self.image = None
         self.font_path = config.font_path
 
@@ -40,14 +38,11 @@ class Post(object):
         position = (40, self.size - 50)
         draw.text(position, source_string, fill=(255, 255, 255, 255), font=font)
 
-    def save(self):
+    def save(self, file_path):
         if self.image is None:
             print("No image generated")
             return None
-
-        utc_string = datetime.utcnow()
-        post_name = self.save_path + str(utc_string)
-        self.image.save(post_name, "JPEG")
+        self.image.save(file_path, "JPEG")
 
     def show(self):
         if self.image is None:

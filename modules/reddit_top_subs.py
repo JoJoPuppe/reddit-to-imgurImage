@@ -1,21 +1,20 @@
 import praw
-import config
 import time
 
 
-class LifeProTip(object):
-    def __init__(self):
-        self.reddit = self._auth_reddit()
+class RedditSubmissions(object):
+    def __init__(self, min_score=100):
+        self.reddit = None
         self.sub_name = "LifeProTips"
-        self.min_score = 100
+        self.min_score = min_score
 
-    def _auth_reddit(self):
-        reddit = praw.Reddit(client_id=config.red_client_id,
-                             client_secret=config.red_client_secret,
-                             password=config.red_password,
-                             user_agent=config.red_agent,
-                             username=config.red_username)
-        return reddit
+    def authenticate(self, client_id, client_secret, password, user_agent, username):
+        reddit = praw.Reddit(client_id=client_id,
+                             client_secret=client_secret,
+                             password=password,
+                             user_agent=user_agent,
+                             username=username)
+        self.reddit = reddit
 
     def get_top_subs(self, sub_name):
         subs = []
