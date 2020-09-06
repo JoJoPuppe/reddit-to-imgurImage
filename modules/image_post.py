@@ -1,4 +1,4 @@
-from PIL import ImageDraw
+from PIL import ImageDraw, ImageFont
 from modules.textfitter import CenterdTextImage
 from modules.gradient import Gradient
 from datetime import datetime
@@ -12,13 +12,12 @@ class Post(object):
         self.post_size = (size, size)
         self.save_path = path
         self.image = None
+        self.font_path = config.font_path
 
     def create_text_image(self, text):
-        font_path = config.font_path
         text_box_size = (self.size - 100, self.size - 100)
-        image = CenterdTextImage(self.post_size, text_box_size, font_path)
-        clean_text = self.clean_ltp_string(text)
-        image = image.write_text_lines(clean_text)
+        image = CenterdTextImage(self.post_size, text_box_size, self.font_path)
+        image = image.write_text_lines(text)
 
         return image
 
@@ -35,6 +34,12 @@ class Post(object):
 
         self.image = gradient_img
 
+    def add_source(self, source_string):
+        font = ImageFont.truetype(self.font_path, 15)
+        draw = ImageDraw.Draw(self.image)
+        position = (40, self.size - 50)
+        draw.text(position, source_string, fill=(255, 255, 255, 255), font=font)
+
     def save(self):
         if self.image is None:
             print("No image generated")
@@ -49,7 +54,3 @@ class Post(object):
             print("No image generated")
             return None
         self.image.show()
-
-    def clean_ltp_string(self, text):
-        new_text = re.search(r'(?![ltp\W]).+', text, flags=re.IGNORECASE)
-        return new_text.group(0)

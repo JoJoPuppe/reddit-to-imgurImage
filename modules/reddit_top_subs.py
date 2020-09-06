@@ -1,11 +1,13 @@
 import praw
 import config
+import time
 
 
 class LifeProTip(object):
     def __init__(self):
-        self.tips_ids = self._load_ids()
         self.reddit = self._auth_reddit()
+        self.sub_name = "LifeProTips"
+        self.min_score = 100
 
     def _auth_reddit(self):
         reddit = praw.Reddit(client_id=config.red_client_id,
@@ -15,38 +17,14 @@ class LifeProTip(object):
                              username=config.red_username)
         return reddit
 
-    def _load_ids(self):
-        with open("tips_ids.txt", "r") as f:
-            tips = f.read().split(",")
+    def get_top_subs(self, sub_name):
+        subs = []
+        for submission in self.reddit.subreddit(sub_name).hot(limit=10):
+            if submission.score < self.min_score: continue
+            formatted_date = time.strftime("%Y-%m-%d %H:%H:%S", time.localtime(submission.created_utc))
+            subs.append((submission.id, formatted_date))
+        return subs
 
-        return tips
-
-    def get_lpt(self):
-        for sub in self.reddit.subreddit("LifeProTips").hot(limit=1):
-            lpt = sub
-        return lpt.title
-
-    def get_life_pro_tip(self):
-        new_ids = []
-        submission_titles = []
-        for submission in self.reddit.subreddit("LifeProTips").hot(limit=10):
-            if submission.id not in self.tips_ids:
-                new_ids.append(submission.id)
-                submission_titles.append(submission.title)
-        if new_ids:
-            self._save_new_ids(new_ids)
-            self._save_submissions(submission_titles)
-
-        return submission_titles
-
-    def _save_submissions(self, subs):
-        with open("subs.txt", "a") as f:
-            subs_text = "\n".join(subs)
-            subs_text += "\n"
-            f.write(subs_text)
-
-    def _save_new_ids(self, ids):
-        self.tips_ids.extend(ids)
-        with open("tips_ids.txt", "w+") as f:
-            text = ",".join(self.tips_ids)
-            f.write(text)
+    def sub_title(self, sub_id):
+        oldest_sub = praw.models.Submission(self.reddit, id=sub_id)
+        return oldest_sub.title

@@ -56,9 +56,7 @@ class CenterdTextImage(object):
         font_size = 0
         height_sum = 0
         size = [0, 0]
-        while height_sum < self.text_box_height and \
-                size[0] < self.text_box_width:
-
+        while height_sum < self.text_box_height:
             font_size += 1
             lines = self.build_lines(text, font_size)
             size = self.get_max_text_size(lines, font_size)
@@ -72,11 +70,10 @@ class CenterdTextImage(object):
         font_size = self.get_optimal_font_size(text)
         lines = self.build_lines(text, font_size)
         size = self.get_max_text_size(lines, font_size)
+        height_sum = len(lines) * size[1]
 
-        text_height = size[1] - int((font_size / 3))
-        text_block_height = len(lines) * text_height
-        height = int((self.height - text_block_height) / 2) - \
-            int(text_height / 4)
+        height = int((self.height - height_sum) / 2) - \
+            int(size[1] / 5)
         lines = [' '.join(line) for line in lines if line]
         for index, line in enumerate(lines):
             total_size = self.get_text_size(font_size, line)
@@ -84,6 +81,6 @@ class CenterdTextImage(object):
             self.write_text((x_left, height), line,
                             font_size, color)
 
-            height += text_height
+            height += size[1]
 
         return self.image
