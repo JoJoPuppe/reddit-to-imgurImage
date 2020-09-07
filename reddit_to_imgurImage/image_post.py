@@ -2,10 +2,7 @@ from PIL import ImageDraw, ImageFont
 from reddit_to_imgurImage.textfitter import CenterdTextImage
 from reddit_to_imgurImage.gradient import Gradient
 from datetime import datetime
-import yaml
 
-config = yaml.safe_load(open("./config.yml"))
-font_path = config["font"]["font_path"]
 
 class Post(object):
     def __init__(self, size, font_path):
@@ -17,7 +14,8 @@ class Post(object):
     def create_text_image(self, text):
         text_box_size = (self.size - 100, self.size - 100)
         image = CenterdTextImage(self.post_size, text_box_size, self.font_path)
-        image = image.write_text_lines(text)
+        image.load_text(text)
+        image = image.write_text_lines()
 
         return image
 
@@ -38,7 +36,8 @@ class Post(object):
         font = ImageFont.truetype(self.font_path, 15)
         draw = ImageDraw.Draw(self.image)
         position = (40, self.size - 50)
-        draw.text(position, source_string, fill=(255, 255, 255, 255), font=font)
+        draw.text(position, source_string,
+                  fill=(255, 255, 255, 255), font=font)
 
     def save(self, file_path):
         if self.image is None:

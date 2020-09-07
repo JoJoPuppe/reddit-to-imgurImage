@@ -6,6 +6,7 @@ class CenterdTextImage(object):
                  mode='RGBA', background=(0, 0, 0, 0)):
         self.height = size[1]
         self.width = size[0]
+        self.text = None
         self.text_box_height = text_box_size[1]
         self.text_box_width = text_box_size[0]
         self.image = Image.new(mode, (self.width, self.height),
@@ -14,6 +15,9 @@ class CenterdTextImage(object):
         self.x = int((self.width - self.text_box_width) / 2)
         self.y = int((self.height - self.text_box_height) / 2)
         self.font_filename = font_filename
+
+    def load_text(self, text):
+        self.text = text
 
     def write_text(self, pos, text, font_size=11,
                    color=(255, 255, 255)):
@@ -24,8 +28,8 @@ class CenterdTextImage(object):
         font = ImageFont.truetype(self.font_filename, font_size)
         return font.getsize(text)
 
-    def build_lines(self, text, font_size):
-        words = text.split()
+    def build_lines(self, font_size):
+        words = self.text.split()
         lines = []
         line = []
         for word in words:
@@ -49,14 +53,14 @@ class CenterdTextImage(object):
 
         return max(size_array, key=lambda x: x[0])
 
-    def get_optimal_font_size(self, text):
+    def get_optimal_font_size(self):
         lines = []
         font_size = 0
         height_sum = 0
         size = [0, 0]
         while height_sum < self.text_box_height:
             font_size += 1
-            lines = self.build_lines(text, font_size)
+            lines = self.build_lines(font_size)
             size = self.get_max_text_size(lines, font_size)
             text_height = size[1]
             height_sum = len(lines) * text_height
@@ -64,9 +68,22 @@ class CenterdTextImage(object):
         font_size -= 1
         return font_size
 
-    def write_text_lines(self, text, color=(255, 255, 255)):
-        font_size = self.get_optimal_font_size(text)
-        lines = self.build_lines(text, font_size)
+    def check_max_width(self, font_size):
+        lines = self.build_lines(font_size)
+        size = self.get_max_text_size(lines, font_size)
+
+        while size[0] > self.text_box_width:
+            font_size -= 1
+            lines = self.build_lines(font_size)
+            size = self.get_max_text_size(lines, font_size)
+
+        font_size += 1
+        return font_size
+
+    def write_text_lines(self, color=(255, 255, 255)):
+        font_size = self.get_optimal_font_size()
+        font_size = self.check_max_width(font_size)
+        lines = self.build_lines(font_size)
         size = self.get_max_text_size(lines, font_size)
         height_sum = len(lines) * size[1]
 
