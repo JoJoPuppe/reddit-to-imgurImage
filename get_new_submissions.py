@@ -1,5 +1,5 @@
-from modules.reddit_subs_db import MysqlSubmissions
-from modules.reddit_top_subs import RedditSubmissions
+from reddit_to_imgurImage.reddit_subs_db import MysqlSubmissions
+from reddit_to_imgurImage.reddit_top_subs import RedditSubmissions
 import yaml
 
 config = yaml.safe_load(open("./config.yml"))

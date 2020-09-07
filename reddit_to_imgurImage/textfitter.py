@@ -3,8 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 class CenterdTextImage(object):
     def __init__(self, size, text_box_size, font_filename,
-                 mode='RGBA', background=(0, 0, 0, 0),
-                 encoding='utf8'):
+                 mode='RGBA', background=(0, 0, 0, 0)):
         self.height = size[1]
         self.width = size[0]
         self.text_box_height = text_box_size[1]
@@ -12,7 +11,6 @@ class CenterdTextImage(object):
         self.image = Image.new(mode, (self.width, self.height),
                                color=background)
         self.draw = ImageDraw.Draw(self.image)
-        self.encoding = encoding
         self.x = int((self.width - self.text_box_width) / 2)
         self.y = int((self.height - self.text_box_height) / 2)
         self.font_filename = font_filename

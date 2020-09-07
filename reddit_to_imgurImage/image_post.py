@@ -1,16 +1,18 @@
 from PIL import ImageDraw, ImageFont
-from modules.textfitter import CenterdTextImage
-from modules.gradient import Gradient
+from reddit_to_imgurImage.textfitter import CenterdTextImage
+from reddit_to_imgurImage.gradient import Gradient
 from datetime import datetime
-import config
+import yaml
 
+config = yaml.safe_load(open("./config.yml"))
+font_path = config["font"]["font_path"]
 
 class Post(object):
-    def __init__(self, size):
+    def __init__(self, size, font_path):
         self.size = size
         self.post_size = (size, size)
         self.image = None
-        self.font_path = config.font_path
+        self.font_path = font_path
 
     def create_text_image(self, text):
         text_box_size = (self.size - 100, self.size - 100)

@@ -1,8 +1,8 @@
-from modules.reddit_top_subs import RedditSubmissions
-from modules.reddit_subs_db import MysqlSubmissions
-from modules.imgur_image_upload import ImgurPost
-from modules.image_post import Post
-import modules.random_filename as helper
+from reddit_to_imgurImage.reddit_top_subs import RedditSubmissions
+from reddit_to_imgurImage.reddit_subs_db import MysqlSubmissions
+from reddit_to_imgurImage.imgur_image_upload import ImgurPost
+from reddit_to_imgurImage.image_post import Post
+import reddit_to_imgurImage.misc as misc
 import os
 import time
 import yaml
@@ -34,8 +34,8 @@ reddit_subs.authenticate(reddit_credentials["client_id"],
                          reddit_credentials["agent"],
                          reddit_credentials["username"])
 
-# next fix path of image (creation and imgur)
-
+# load font
+font_path = config["font"]["font_path"]
 
 def create_imgur_post():
     new_post = database.get_new_post()
@@ -43,19 +43,24 @@ def create_imgur_post():
         print("no new posts available.")
         return
 
+    print("processing new post")
     title = reddit_subs.sub_title(new_post[0][0])
-    new_title = helper.delete_ltp(title)
+    new_title = misc.delete_lpt(title)
 
-    file_name = helper.generate_file_name(new_title)
+    file_name = misc.generate_file_name(new_title)
+    print(f"file_name = {file_name}")
+
     path = "./Posts/"
     save_path = os.path.join(path, file_name)
 
-    post = Post(500)
+    post = Post(500, font_path)
+    print("create image...")
     post.combine_gradient_and_text(new_title)
     post.add_source("r/LifeProTips")
     post.save(save_path)
+    print("image saved")
     time.sleep(1)
-    description = "parsed from subreddit 'LifeProTips'"
+    description = "parsed from subreddit LifeProTips"
     imgur_post.upload_post(file_name, file_name, description, save_path)
 
     database.set_posted(new_post[0][0])

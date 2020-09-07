@@ -19,7 +19,8 @@ class ImgurPost(object):
 
         print("Uploading image... ")
         image = self.client.upload_from_path(image_path, config=config, anon=False)
-        print("Done")
+        print(f"{image['link']} uploaded")
+
 
         return image
 

@@ -10,7 +10,7 @@ class Gradient(object):
 
     def generate_color(self):
         hue, lightness, satuation = random(), \
-            uniform(0.5, 0.73), uniform(0.6, 1)
+            uniform(0.45, 0.65), uniform(0.6, 1)
 
         return {"hue": hue, "lightness": lightness,
                 "satuation": satuation}

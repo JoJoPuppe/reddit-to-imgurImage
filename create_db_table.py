@@ -1,4 +1,4 @@
-from modules.reddit_subs_db import MysqlSubmissions
+from reddit_to_imgurImage.reddit_subs_db import MysqlSubmissions
 import yaml
 
 config = yaml.safe_load(open("./config.yml"))

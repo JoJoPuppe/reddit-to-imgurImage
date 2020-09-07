@@ -5,7 +5,6 @@ import time
 class RedditSubmissions(object):
     def __init__(self, min_score=100):
         self.reddit = None
-        self.sub_name = "LifeProTips"
         self.min_score = min_score
 
     def authenticate(self, client_id, client_secret, password, user_agent, username):
